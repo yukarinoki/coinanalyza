@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+</head>
+<body>
+  <% include ../partials/nav.ejs %>
+  <div id="chart"></div>
+
+<script>
+var d1c = [<% for(var key in data){ %> '<%= data[key].first_1 %> <%= data[key].first_2 %> <%= data[key].first_3%>' , <%}%> ]
+var d2c = [<% for(var key in data){ %> '<%= data[key].second_1 %> <%= data[key].second_2 %> <%= data[key].second_3%>' , <%}%> ]
+var d3c = [<% for(var key in data){ %> '<%= data[key].third_1 %> <%= data[key].third_2 %> <%= data[key].third_3%>' , <%}%> ]
+
+
+var chart = c3.generate({
+    bindto: '#chart',
+    data: {
+      x: 'x',
+      xFormat: '%Y-%m-%dT%H:%M:%S',
+      columns: [
+        ['x', <% for(var key in data){ %> '<%= data[key].date.toISOString().slice(0, -5) %>', <%}%>],
+        ['first', <% for(var key in data){ %> <%= data[key].first_ratio %>, <%}%> ],
+        ['second', <% for(var key in data){ %> <%= data[key].second_ratio %>, <%}%> ],
+        ['third', <% for(var key in data){ %> <%= data[key].third_ratio %>, <%}%> ]
+      ],
+    },
+    tooltip: {
+      contents: function (d, defaultTitleFormat, defaultValueFormat, color) {
+        var tooltipHtml = "";
+        var idx = d[0].index;
+        tooltipHtml += '<table class="c3-tooltip">' ;
+        tooltipHtml += '<tr><th colspan=' + '2' + '>' + d[0].x.toISOString().replace("T", " ").slice(0, -5) + '</th></tr>'
+        tooltipHtml += "<tr>";
+        tooltipHtml += "<td class='c3-tooltipName'>" + d1c[idx] + "</td>";
+        tooltipHtml += "<td class='value'>" + d[0].value + "</td>";
+        tooltipHtml += "</tr>";
+        tooltipHtml += "<tr>";
+        tooltipHtml += "<td class='c3-tooltipName'>" + d2c[idx] + "</td>";
+        tooltipHtml += "<td class='value'>" + d[1].value + "</td>";
+        tooltipHtml += "</tr>";
+        tooltipHtml += "<tr>";
+        tooltipHtml += "<td class='c3-tooltipName'>" + d3c[idx] + "</td>";
+        tooltipHtml += "<td class='value'>" + d[2].value + "</td>";
+        tooltipHtml += "</tr>";
+        tooltipHtml += '</table>';
+        return tooltipHtml;
+      }
+    },
+    axis: {
+      x: {
+          type: 'timeseries',
+            tick: {
+                format: '%Y-%m-%d %H:%M:%S',
+                rotate: -90
+            }
+      }
+    }
+});
+</script>
+
+</body>
+</html>

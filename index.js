@@ -5,6 +5,9 @@ const PORT = process.env.PORT || 5000
 
 var app = express()
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
 app
   .use(express.static(path.join(__dirname, 'public')))
   .use("/c3", express.static(__dirname + "/node_modules/c3"))

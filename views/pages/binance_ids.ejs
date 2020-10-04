@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <% include ../partials/header.ejs %>
+</head>
+
+<body>
+
+<% include ../partials/nav.ejs %>
+
+<div class="container">
+<h2>Database Results</h2>
+
+<ul>
+  <% for (var key in ids) { %>
+        <li> <a href="/binance/price?id=<%= ids[key].id %>"> <%= ids[key].id %> </a></li>
+  <% } %>
+</ul>
+
+</div>
+
+</body>
+</html>
