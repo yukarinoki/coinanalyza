@@ -1,13 +1,18 @@
 var router = require("express").Router()
 const { body, query, validationResult } = require('express-validator');
 var pg = require('pg');
+require('dotenv').config();
+
+console.log(process.env.ENV_DB)
+
 var pool = new pg.Pool({
-    database: 'db',
-    user: 'admin', 
-    password: 'admin', 
-    host: 'app-db',
+    host: process.env.ENV_HOST,
+    database: process.env.ENV_DB,
+    user: process.env.ENV_USER,
     port: 5432,
-});
+    password: process.env.ENV_PASSWORD,
+}); 
+
 var id = 4
 router.use((req, res, next) => {
     console.log((new Date()).toISOString());
@@ -23,7 +28,7 @@ router.get('/db', function(req, res, next) {
           res.render('pages/db', {
             title: 'Express',
             name: result.rows[0].name,
-          });
+          })
           console.log(result);
         });
       }
@@ -56,6 +61,7 @@ router.get("/", (req,res) => {
             res.render('pages/binance_ids.ejs', {
                 ids: result.rows
             })
+            client.release(true)
             console.log(result);
           });
         }
@@ -72,12 +78,14 @@ router.get("/price", [query("id").isLength({min: 8, max: 8})],(req, res) =>{
     }
     pool.connect( (err, client) =>{
         if(err){
+            client.release(true)
             return res.status(400).json({error: err.message})
         }
         else {
             client.query(query)
             .then(result => {console.log(result); return res.render('pages/price.ejs', {rowCount: result.rowCount, data: result.rows})})
             .catch(error => {console.error(error); return res.status(400).send(error.message)})
+            .finally(() => client.release(true))
         }
     })
 })
@@ -93,12 +101,14 @@ router.post("/id", [ body('id').isLength({ min: 8 }) ], (req, res) => {
     }
     pool.connect( (err, client) =>{
         if(err){
+            client.release(true)
             return res.status(400).json({error: err.message})
         }
         else {
             client.query(query)
             .then(result => {return res.send('success')})
             .catch(error => {console.error(error); return res.status(400).send(error.message)})
+            .finally(() => client.release(true))
         }
     })
 })
@@ -131,12 +141,14 @@ router.post(
     }
     pool.connect( (err, client) =>{
         if(err){
+            client.release(true)
             return res.status(400).json({error: err.message})
         }
         else {
             client.query(query)
             .then(result => {return res.send('success')})
             .catch(error => {console.error(error); return res.status(400).send(error)})
+            .finally(() => client.release(true))
         }
     })
 })
