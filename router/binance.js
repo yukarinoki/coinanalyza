@@ -58,11 +58,15 @@ router.get("/", (req,res) => {
           res.status(400).send(err);
         } else {
           client.query('SELECT id FROM client', function (err, result) {
-            res.render('pages/binance_ids.ejs', {
-                ids: result.rows
-            })
-            client.release(true)
-            console.log(result);
+            if (err) {
+                res.status(400).send(err);
+            } else {
+                res.render('pages/binance_ids.ejs', {
+                    ids: result.rows
+                })
+                client.release(true)
+                console.log(result);
+            }
           });
         }
     });
