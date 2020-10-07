@@ -1,6 +1,7 @@
 # COINANALYZA
 Coin price information App for ARBITRAGE.
 
+URL: https://coinanalyza.herokuapp.com/
 
 ## Running Locally
 
